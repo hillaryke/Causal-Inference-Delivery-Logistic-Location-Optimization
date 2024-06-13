@@ -1,4 +1,9 @@
 import pandas as pd
+import os 
+
+# Define the path to the data
+data_dir = 'data'
+
 
 class GokadaDataPreprocessor:
     def __init__(self, completed_orders_path, drivers_location_path):
@@ -21,6 +26,9 @@ class GokadaDataPreprocessor:
         # Merge DataFrames
         self.merged_df = self.completed_orders.merge(self.drivers_location, on='order_id', how='left')
 
+        # Drop rows where 'driver_action' is null
+        self.merged_df.dropna(subset=['driver_action'], inplace=True)
+
         # Filter for accepted orders
         # self.merged_df_accepted = self.merged_df[self.merged_df['driver_action'] == 'accepted'].copy()
 
@@ -33,16 +41,17 @@ class GokadaDataPreprocessor:
         # Extract latitude and longitude
         self._extract_coordinates()
 
-        return self.merged_df_accepted
+        return self.merged_df
 
     def _handle_missing_times(self):
-        """Imputes missing values in 'Trip Start Time'."""
-        median_start_time = self.merged_df_accepted['Trip Start Time'].median()
-        self.merged_df_accepted['Trip Start Time'].fillna(median_start_time, inplace=True)
+      """Imputes missing values in 'Trip Start Time'."""
+      self.merged_df['Trip Start Time'] = pd.to_datetime(self.merged_df['Trip Start Time'])
+      median_start_time = self.merged_df['Trip Start Time'].median()
+      self.merged_df['Trip Start Time'].fillna(median_start_time, inplace=True)
 
     def _convert_timestamps_and_extract_features(self):
         """Converts time columns to datetime and extracts features."""
-        for df in [self.merged_df_accepted]:
+        for df in [self.merged_df]:
             df['Trip Start Time'] = pd.to_datetime(df['Trip Start Time'])
             df['Trip End Time'] = pd.to_datetime(df['Trip End Time'])
             df['day_of_week'] = df['Trip Start Time'].dt.day_name()
@@ -53,11 +62,11 @@ class GokadaDataPreprocessor:
     def _extract_coordinates(self):
         """Extracts latitude and longitude from string columns."""
         for col in ['Trip Origin', 'Trip Destination']:
-            for df in [self.merged_df_accepted]:
+            for df in [self.merged_df]:
                 df[[f'{col}_latitude', f'{col}_longitude']] = df[col].str.split(',', expand=True).astype(float)
 
 
 # Example usage
-preprocessor = GokadaDataPreprocessor('completed_orders.csv', 'drivers_location_during_request.csv')
-preprocessed_df = preprocessor.preprocess_data()
-print(preprocessed_df.head().to_markdown(index=False, numalign="left", stralign="left"))
+# preprocessor = GokadaDataPreprocessor('completed_orders.csv', 'drivers_location_during_request.csv')
+# preprocessed_df = preprocessor.preprocess_data()
+# print(preprocessed_df.head().to_markdown(index=False, numalign="left", stralign="left"))
