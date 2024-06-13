@@ -15,6 +15,10 @@ class GokadaDataPreprocessor:
 
         # Rename 'Trip ID' to 'order_id' in completed_orders
         self.completed_orders = self.completed_orders.rename(columns={'Trip ID': 'order_id'})
+
+        # Rename 'lat' and 'lon' in drivers_location
+        self.drivers_location = self.drivers_location.rename(columns={'lat': 'drivers_lat', 'lng': 'drivers_lon'})
+
         
         # Convert 'order_id' to string in both DataFrames
         self.completed_orders['order_id'] = self.completed_orders['order_id'].astype(str)
