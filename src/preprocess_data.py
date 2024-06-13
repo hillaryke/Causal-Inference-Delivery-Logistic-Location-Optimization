@@ -44,6 +44,9 @@ class GokadaDataPreprocessor:
         # Extract latitude and longitude
         self._extract_coordinates()
 
+        # Convert column names to lowercase and replace spaces with underscores
+        self.merged_df.columns = self.merged_df.columns.str.lower().str.replace(' ', '_')
+
         return self.merged_df
 
     def _handle_missing_times(self):
@@ -61,6 +64,9 @@ class GokadaDataPreprocessor:
             df['hour_of_day'] = df['Trip Start Time'].dt.hour
             df['day_of_month'] = df['Trip Start Time'].dt.day
             df['month'] = df['Trip Start Time'].dt.month_name()
+            df['trip_start_date'] = pd.to_datetime(df['Trip Start Time']).dt.date
+            df['trip_end_date'] = pd.to_datetime(df['Trip End Time']).dt.date
+
 
     def _extract_coordinates(self):
         """Extracts latitude and longitude from string columns."""
