@@ -1,5 +1,6 @@
 import pandas as pd
 import os 
+from src.feature_engineering import is_holiday
 
 # Define the path to the data
 data_dir = 'data'
@@ -47,6 +48,8 @@ class GokadaDataPreprocessor:
         # Convert column names to lowercase and replace spaces with underscores
         self.merged_df.columns = self.merged_df.columns.str.lower().str.replace(' ', '_')
 
+        self._add_is_holiday_feature('trip_start_time')
+
         return self.merged_df
 
     def _handle_missing_times(self):
@@ -66,7 +69,11 @@ class GokadaDataPreprocessor:
             df['month'] = df['Trip Start Time'].dt.month_name()
             df['trip_start_date'] = pd.to_datetime(df['Trip Start Time']).dt.date
             df['trip_end_date'] = pd.to_datetime(df['Trip End Time']).dt.date
+            df['trip_duration'] = (pd.to_datetime(df['Trip End Time']) - pd.to_datetime(df['Trip Start Time'])).dt.total_seconds()
 
+    def _add_is_holiday_feature(self, col_name):
+        """Adds a feature indicating whether the trip start date is a holiday."""
+        self.merged_df['is_holiday'] = self.merged_df[col_name].apply(is_holiday)
 
     def _extract_coordinates(self):
         """Extracts latitude and longitude from string columns."""
