@@ -9,8 +9,12 @@ data_dir = 'data'
 
 class GokadaDataPreprocessor:
     def __init__(self, completed_orders_path, drivers_location_path):
-        self.completed_orders = pd.read_csv(completed_orders_path)
-        self.drivers_location = pd.read_csv(drivers_location_path)
+        if completed_orders_path is not None and drivers_location_path is not None:
+            self.completed_orders = pd.read_csv(completed_orders_path)
+            self.drivers_location = pd.read_csv(drivers_location_path)
+
+        self.completed_orders = None
+        self.drivers_location = None
 
     def preprocess_data(self):
         """Performs all cleaning and preprocessing steps."""

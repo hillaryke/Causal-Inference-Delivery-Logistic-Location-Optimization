@@ -1,7 +1,7 @@
 # FILE: tests/test_preprocess_data.py
 
 import unittest
-from preprocess_data import GokadaDataPreprocessor
+from src.preprocess_data import GokadaDataPreprocessor
 import pandas as pd
 from datetime import datetime
 
