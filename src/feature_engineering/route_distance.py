@@ -44,9 +44,37 @@ def calculate_distance_with_ors_concurrent(start_end_pairs, profile='cycling-ele
 # distances = calculate_distance_with_ors_concurrent(start_end_pairs)
 # df['trip_distance'] = distances
 
+def calculate_estimated_time_with_ors(start_coords, end_coords, profile='cycling-electric'):
+    """
+    Calculates the estimated travel time between two coordinates using OpenRouteService.
 
-import requests
-import numpy as np
+    Parameters:
+    - start_coords (str): The starting coordinates in 'longitude,latitude' format.
+    - end_coords (str): The ending coordinates in 'longitude,latitude' format.
+    - profile (str): The routing profile to use. Default is 'cycling-electric'.
+
+    Returns:
+    - Estimated travel time in seconds.
+    - np.nan if there is an error.
+    """
+    url = f'http://localhost:8080/ors/v2/directions/{profile}?'
+    params = {
+        'start': start_coords,
+        'end': end_coords
+    }
+
+    try:
+        response = requests.get(url, params=params)
+        response.raise_for_status()  # Raises an HTTPError if the response code was unsuccessful
+        directions = response.json()
+        estimated_time = directions['features'][0]['properties']['segments'][0]['duration']
+        return estimated_time
+    except requests.HTTPError as http_err:
+        print(f"HTTP error occurred: {http_err}")
+        return np.nan  # Return np.nan on error
+    except Exception as err:
+        print(f"An error occurred: {err}")
+        return np.nan  # Return np.nan on error
 
 def calculate_distance_with_ors(start_coords, end_coords, profile='cycling-electric'):
     """
