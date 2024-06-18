@@ -40,6 +40,12 @@ class GokadaDataPreprocessor:
         
         # Rename 'lat' and 'lon' to 'drivers_lat' and 'drivers_lon'
         self.drivers_location = self.drivers_location.rename(columns={'lat': 'drivers_lat', 'lng': 'drivers_lng'})
+
+        # Create a new column 'driver_location' by concatenating 'drivers_lng' and 'drivers_lat'
+        self.drivers_location['driver_location'] = self.drivers_location['drivers_lng'].astype(str) + ',' + self.drivers_location['drivers_lat'].astype(str)
+
+        # Convert column names to lowercase and replace spaces with underscores
+        self.drivers_location.columns = self.drivers_location.columns.str.lower().str.replace(' ', '_')
         
         return self.drivers_location
 
@@ -64,6 +70,9 @@ class GokadaDataPreprocessor:
 
         # Add 'is_holiday' feature
         self._add_is_holiday_feature()
+
+        # Convert column names to lowercase and replace spaces with underscores
+        self.completed_orders.columns = self.completed_orders.columns.str.lower().str.replace(' ', '_')
         
         return self.completed_orders
 

@@ -1,6 +1,10 @@
 data
 node_modules
 
+*.html
+*.geojson
+*.json
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
