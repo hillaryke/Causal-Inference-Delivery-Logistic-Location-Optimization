@@ -47,7 +47,7 @@ fqdn==1.5.1
 frozenlist==1.4.1
 fsspec==2024.6.0
 geographiclib==2.0
-geopandas==0.14.4
+geopandas==0.13.2
 geopy==2.4.1
 graphviz==0.20.3
 h11==0.14.0
