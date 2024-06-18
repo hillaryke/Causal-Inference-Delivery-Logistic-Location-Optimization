@@ -18,7 +18,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install pandas seaborn matplotlib scipy holidays
+          pip install pandas seaborn matplotlib scipy holidays requests
 
       - name: Run tests
         run: |
